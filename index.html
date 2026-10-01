@@ -5,323 +5,205 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Les attaques informatiques – Mission 6</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#f6f6f7;--mute:#a3a3ab;--dim:#6d6d75;--line:rgba(255,255,255,.12);--fill:rgba(255,255,255,.04);--ok:#5fd39a;
---sans:'Archivo','Segoe UI','Helvetica Neue',Arial,sans-serif;--mono:'IBM Plex Mono',Consolas,'Courier New',monospace;--ease:cubic-bezier(.2,.7,.2,1);--a:#e5252a;--al:rgba(229,37,42,.16);--t:#fff}
+:root{--ink:#f6f6f7;--mute:#a9a9b1;--dim:#7a7a82;--line:rgba(255,255,255,.14);--fill:rgba(255,255,255,.04);--sans:'Archivo','Segoe UI',Arial,sans-serif;--mono:'IBM Plex Mono',Consolas,monospace;--e:cubic-bezier(.2,.7,.2,1);--a:#e5252a;--al:rgba(229,37,42,.16)}
 .fr{--a:#e5252a;--al:rgba(229,37,42,.16);--t:#fff}.fb{--a:#3fb8d6;--al:rgba(63,184,214,.15);--t:#021015}.fy{--a:#f0b429;--al:rgba(240,180,41,.14);--t:#150f00}.fg{--a:#5fd39a;--al:rgba(95,211,154,.13);--t:#02140b}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#000;overflow:hidden}
-body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}body.idle{cursor:none}
-#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;background:#000;overflow:hidden}
-#field{position:absolute;left:0;top:0;width:1920px;height:1080px;z-index:0}
-.slide{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;padding:96px 120px 118px;opacity:0;visibility:hidden;transform:translateX(40px);transition:opacity .5s var(--ease),transform .6s var(--ease),visibility 0s .6s}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;background:radial-gradient(1200px 700px at 85% 5%,#16161d,#000)}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding:80px 120px 112px;opacity:0;visibility:hidden;transform:translateX(40px);transition:opacity .5s var(--e),transform .6s var(--e),visibility 0s .6s}
 .slide.before{transform:translateX(-40px)}
-.slide.active{opacity:1;visibility:visible;transform:none;transition:opacity .5s var(--ease),transform .6s var(--ease),visibility 0s}
-.slide::before{content:"";position:absolute;left:0;top:100px;width:16px;height:80px;background:var(--a);transform:scaleY(0);transform-origin:top;transition:transform .6s var(--ease) .15s}
-.slide.active::before{transform:none}
-.s-head h2{font-size:70px;line-height:1.05;font-weight:800;font-stretch:108%;letter-spacing:-.025em;max-width:1300px}
-.s-head .lead{margin-top:20px;font-size:31px;line-height:1.35;color:var(--mute);max-width:1400px}
-.s-head .tag{margin-bottom:22px}
-.s-body{flex:1;min-height:0;margin-top:44px;position:relative}
-.f{opacity:0;transform:translateY(16px);transition:opacity .55s var(--ease),transform .55s var(--ease);pointer-events:none}
-.f.on{opacity:1;transform:none;pointer-events:auto}.f.x{transform:none}
-#foot{position:absolute;left:120px;right:120px;bottom:38px;display:flex;justify-content:space-between;align-items:baseline;font-size:24px;color:var(--dim);z-index:5;transition:opacity .4s}
-#foot .sec{color:var(--mute);flex:1}#foot .who{flex:1;text-align:center}#foot .num{flex:1;text-align:right;font-family:var(--mono);font-size:22px}
-body.nofoot #foot{opacity:0}
-#bar{position:absolute;left:0;bottom:0;height:5px;background:linear-gradient(90deg,#e5252a,#3fb8d6,#f0b429);width:0;transition:width .6s var(--ease);z-index:6}
-.panel{border:1px solid var(--line);background:var(--fill);border-radius:4px}
+.slide.active{opacity:1;visibility:visible;transform:none;transition:opacity .5s var(--e),transform .6s var(--e),visibility 0s}
+.slide::before{content:"";position:absolute;left:0;top:84px;width:16px;height:80px;background:var(--a)}
 .tag{display:inline-block;font-size:22px;font-weight:600;padding:6px 16px;border-radius:999px;background:var(--a);color:var(--t)}
-.tag.ghost{background:transparent;border:1px solid var(--a);color:var(--a);vertical-align:middle;margin-left:14px}
-.key{margin-top:34px;padding:26px 36px;border-left:6px solid var(--a);background:var(--al);font-size:33px;line-height:1.32;font-weight:600;max-width:1500px}
-.key span{font-weight:400;color:#ddd}
-.mono{font-family:var(--mono)}
-/* titre */
-.s-title,.s-end{justify-content:center}.s-title::before,.s-end::before{display:none}
-.s-title::after,.s-end::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#000 0%,rgba(0,0,0,.92) 36%,rgba(0,0,0,.45) 60%,rgba(0,0,0,0) 80%)}
-.s-title h1{font-size:250px;line-height:.86;font-weight:800;font-stretch:125%;letter-spacing:-.05em;margin-left:-8px}
-.s-title .t-m{font-size:30px;font-weight:600;color:var(--a);margin-bottom:34px}
-.t-sub{margin-top:44px;font-size:56px;line-height:1.15;font-weight:600;max-width:1000px}
-.t-line{margin-top:20px;font-size:32px;color:var(--mute)}
-.t-meta{position:absolute;left:120px;bottom:84px;border-left:4px solid var(--a);padding-left:26px;font-size:27px;line-height:1.5;color:var(--mute)}.t-meta b{color:var(--ink);font-weight:600}
-.s-end h2{font-size:190px;line-height:.95;font-weight:800;font-stretch:120%;letter-spacing:-.045em}.s-end .sub{margin-top:30px;font-size:46px;color:var(--mute)}
-/* plan */
-.plan{display:grid;grid-template-columns:repeat(3,1fr);gap:48px}
-.pc{padding:38px 40px 40px;border-top:4px solid var(--a)}
-.pc .pn{font-size:110px;line-height:1;font-weight:800;font-stretch:112%;color:var(--a);display:block}
-.pc h3{margin-top:14px;font-size:46px;font-weight:800;font-stretch:108%}
-.pc ul{margin-top:26px;list-style:none;font-size:30px;color:var(--mute)}
-.pc li{padding:10px 0 10px 28px;position:relative}.pc li::before{content:"";position:absolute;left:0;top:25px;width:10px;height:10px;background:var(--a)}
-.pc p{margin-top:24px;font-size:26px;color:var(--dim)}
-/* DoS */
-.col{width:880px;display:flex;flex-direction:column;gap:26px}
-.pp{padding:30px 38px}.pp h3{font-size:44px;font-weight:800;font-stretch:108%}.pp p{margin-top:12px;font-size:29px;line-height:1.38;color:var(--mute)}
-.pp.hot{border-color:var(--a);background:var(--al)}
-/* SYN */
-.sy{display:grid;grid-template-columns:780px 1fr;gap:90px}
-.hs{position:relative;padding:74px 0 10px}
-.hs::before,.hs::after{content:"";position:absolute;top:62px;bottom:0;width:2px;background:var(--line)}.hs::before{left:50px}.hs::after{right:50px}
-.hs h4{position:absolute;top:0;font-size:32px;font-weight:700}.hs h4:first-of-type{left:0}.hs h4:last-of-type{right:0}
-.hr{position:relative;margin:0 50px;height:104px}
-.hr b{position:absolute;left:0;right:0;top:12px;text-align:center;font-size:29px;font-weight:600}
-.hr i{position:absolute;left:0;right:0;bottom:26px;height:3px;background:var(--a);transform:scaleX(0);transform-origin:left;transition:transform .7s var(--ease),background .4s}
-.hr.l i{transform-origin:right}
-.hr i::after{content:"";position:absolute;right:-2px;top:-9px;border:10px solid transparent;border-left:16px solid var(--a);border-right:0}
-.hr.l i::after{right:auto;left:-2px;border-left:0;border-right:16px solid var(--a)}
-.hr.on i{transform:none}
-.slide:is([data-step="2"],[data-step="3"]) .ok3 i{background:var(--dim)}.slide:is([data-step="2"],[data-step="3"]) .ok3 i::after{border-left-color:var(--dim)}
-.slide:is([data-step="2"],[data-step="3"]) .ok3 b{opacity:0}
-.lost{position:absolute;left:50%;top:34px;transform:translateX(-50%);padding:10px 24px;border:1px solid var(--a);background:#000;color:var(--a);font-family:var(--mono);font-size:25px;white-space:nowrap}
-.lost.f.x{transform:translateX(-50%)}
-.meter{padding:36px 40px;align-self:start}.meter h3{font-size:34px;font-weight:800}.meter p{margin-top:10px;font-size:26px;color:var(--mute);line-height:1.35}
-.mbar{display:grid;grid-template-columns:repeat(10,1fr);gap:8px;margin-top:30px}
-.mbar u{height:52px;border:1px solid var(--line);transition:background .35s calc(var(--k)*70ms),border-color .35s calc(var(--k)*70ms)}
-.slide[data-step="2"] .mbar u:nth-child(-n+3){background:var(--a);border-color:var(--a)}
-.slide[data-step="3"] .mbar u{background:var(--a);border-color:var(--a)}
-.full{margin-top:22px;font-size:31px;font-weight:700;color:var(--a)}
-/* 2 colonnes */
-.two{display:grid;grid-template-columns:1fr 1fr;gap:50px}
-.two .pp{min-height:500px}.two h3 small{display:block;margin-top:6px;font-size:26px;font-weight:400;color:var(--mute)}
-.smp{margin-top:26px;font-family:var(--mono);font-size:24px;line-height:1.6;color:#d1d1d6;background:rgba(0,0,0,.5);border:1px solid var(--line);padding:16px 20px;border-radius:3px;white-space:pre-wrap}
-.smp em{font-style:normal;background:var(--al);box-shadow:0 0 0 3px var(--al);color:#fff}
-.smp.fl{animation:none}
-/* MitM */
-.mm{display:flex;align-items:center;margin-top:30px}
-.nd{width:300px;padding:30px 20px;text-align:center;flex:none}.nd b{display:block;font-size:42px;font-weight:800;font-stretch:108%}.nd span{display:block;margin-top:8px;font-size:24px;color:var(--mute)}
-.nd.bad{border-color:var(--a);background:var(--al);animation:pulse 1.8s infinite}
-@keyframes pulse{50%{box-shadow:0 0 0 14px var(--al)}}
-.cn{position:relative;flex:1;height:2px;background:var(--line);margin:0 6px}
-.cn i{position:absolute;left:0;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:var(--a);opacity:0}
-.slide.active .cn.on i{animation:travel 1.8s linear infinite}
-.cn small{position:absolute;top:22px;left:0;right:0;text-align:center;font-size:24px;color:var(--mute);white-space:nowrap}
-.cn.on i+i{animation-delay:.9s}
-@keyframes travel{0%{left:0;opacity:0}15%{opacity:1}85%{opacity:1}100%{left:calc(100% - 12px);opacity:0}}
-.chips{display:flex;gap:20px;margin-top:34px;padding-left:690px}.chips span{font-size:28px;font-weight:600;padding:10px 24px;border:1px solid var(--a);color:var(--a)}
+h2{font-size:64px;line-height:1.05;font-weight:800;font-stretch:108%;letter-spacing:-.02em;margin-top:18px}
+h2 small{font-size:34px;font-weight:500;color:var(--mute);margin-left:22px;letter-spacing:0;font-stretch:100%}
+.lead{margin-top:16px;font-size:30px;color:var(--mute)}
+.panel{border:1px solid var(--line);background:var(--fill);border-radius:4px}
+.f{opacity:0;transform:translateY(16px);transition:opacity .5s var(--e),transform .5s var(--e)}
+.f.on{opacity:1;transform:none}
 /* chaîne */
-.pipe{display:grid;grid-template-columns:1fr 90px 1fr 90px 1fr;align-items:stretch;margin-top:10px}
-.blk{padding:32px 32px;min-height:440px;display:flex;flex-direction:column}
-.blk h3{margin-top:16px;font-size:44px;font-weight:800;font-stretch:108%}.blk p{margin-top:14px;font-size:28px;line-height:1.38;color:var(--mute)}
-.blk .smp{margin-top:auto}.pipe .cn{align-self:center}
+.ch{display:flex;align-items:center;gap:16px;margin-top:26px}
+.ch span{padding:12px 24px;border:1px solid var(--a);background:var(--al);border-radius:4px;font-size:26px;font-weight:600}
+.ch em{font-style:normal;color:var(--a);font-size:34px}
+/* trois colonnes = trois voix */
+.cols{flex:1;min-height:0;display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:28px}
+.col{padding:24px 30px;border-top:4px solid var(--a);overflow:hidden}
+.rl{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.rl b{font-size:64px;line-height:1;color:var(--a);font-weight:800}
+.rl span{font-size:33px;font-weight:800}
+.rl i{width:100%;font-style:normal;font-size:22px;color:var(--dim);font-family:var(--mono)}
+.col ul,.col ol{list-style:none;font-size:25px;line-height:1.33;color:#d8d8dc;counter-reset:n}
+.col li{padding:7px 0 7px 34px;position:relative}
+.col ul li::before{content:"";position:absolute;left:0;top:18px;width:10px;height:10px;background:var(--a)}
+.col ol li{counter-increment:n}
+.col ol li::before{content:counter(n);position:absolute;left:0;top:6px;font:600 22px var(--mono);color:var(--a)}
+.col h4{font-size:21px;letter-spacing:.07em;text-transform:uppercase;color:var(--a);margin:4px 0 4px}
+.col p{font-size:25px;line-height:1.33;color:#d8d8dc;margin-bottom:14px}
+.key{margin-top:24px;padding:20px 34px;border-left:6px solid var(--a);background:var(--al);font-size:30px;line-height:1.3}
+.key b{font-weight:700}.key span{color:#ddd}
+/* titre / fin */
+.tt,.te{justify-content:center}.tt::before,.te::before{display:none}
+.tt .m{color:var(--a);font-size:30px;font-weight:600;margin-bottom:28px}
+.tt h1{font-size:230px;line-height:.88;font-weight:800;font-stretch:125%;letter-spacing:-.05em;margin-left:-8px}
+.tt .sub{margin-top:40px;font-size:54px;font-weight:600}
+.tt .meta{position:absolute;left:120px;bottom:84px;border-left:4px solid var(--a);padding-left:26px;font-size:27px;line-height:1.5;color:var(--mute)}
+.meta b{color:var(--ink);font-weight:600}
+.te h2{font-size:190px;line-height:.95;font-stretch:120%;letter-spacing:-.045em}.te .sub{margin-top:28px;font-size:46px;color:var(--mute)}
+/* familles */
+.plan{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;margin-top:44px}
+.pc{padding:36px 40px;border-top:4px solid var(--a)}
+.pc .pn{font-size:100px;line-height:1;font-weight:800;color:var(--a);display:block}
+.pc h3{margin-top:12px;font-size:44px;font-weight:800}
+.pc ul{margin-top:22px;list-style:none;font-size:30px;color:var(--mute)}
+.pc li{padding:9px 0 9px 28px;position:relative}.pc li::before{content:"";position:absolute;left:0;top:23px;width:10px;height:10px;background:var(--a)}
+.pc p{margin-top:20px;font-size:26px;color:var(--dim)}
 /* tableau */
-table{width:100%;border-collapse:collapse;font-size:28px}
-th{text-align:left;font-weight:500;color:var(--dim);padding:10px 20px;border-bottom:1px solid var(--line)}
-td{padding:13px 20px;border-bottom:1px solid var(--line);color:var(--mute)}td:first-child{font-weight:800;font-stretch:106%;font-size:30px;color:var(--a)}
-/* protection */
-.pr{display:grid;grid-template-columns:repeat(3,1fr);gap:44px}
-.pr .g{border-top:5px solid var(--a);padding:22px 0 0}.pr h3{font-size:46px;font-weight:800;font-stretch:108%}.pr h3 small{display:block;margin-top:6px;font-size:25px;font-weight:400;color:var(--mute)}
-.pr .it{margin-top:22px;padding:22px 28px;font-size:29px;line-height:1.35}
+table{width:100%;border-collapse:collapse;font-size:27px;margin-top:30px}
+th{text-align:left;color:var(--dim);font-size:21px;text-transform:uppercase;letter-spacing:.06em;padding:10px 16px;border-bottom:1px solid var(--line)}
+td{padding:11px 16px;border-bottom:1px solid var(--line)}
+td:first-child{font-weight:700;border-left:6px solid var(--a)}
+tr.f{transform:none}
+/* parades */
+.pr{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;margin-top:40px}
+.pr h3{font-size:46px;font-weight:800;color:var(--a)}.pr small{display:block;margin:6px 0 22px;font-size:26px;color:var(--mute)}
+.it{padding:22px 28px;margin-bottom:16px;font-size:29px}
 /* interface */
-#nav{position:absolute;right:120px;bottom:82px;display:flex;gap:12px;z-index:8;opacity:0;transition:opacity .3s}body:not(.idle) #nav{opacity:.9}
-#nav button{width:54px;height:54px;border-radius:50%;border:1px solid var(--line);background:rgba(0,0,0,.6);color:var(--ink);cursor:pointer;font-size:26px}#nav button:hover{border-color:#fff}
-#hint{position:absolute;left:50%;bottom:110px;transform:translateX(-50%);z-index:12;font-size:26px;color:var(--mute);background:rgba(0,0,0,.75);border:1px solid var(--line);padding:14px 30px;border-radius:999px;transition:opacity .8s;white-space:nowrap}
-.ov{position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.95);display:none;padding:90px 120px}.ov.on{display:block}
-.ov h2{font-size:56px;font-weight:800;margin-bottom:40px}
-#ovg{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
-#ovg button{all:unset;cursor:pointer;box-sizing:border-box;padding:22px 24px;border:1px solid var(--line);border-radius:4px;background:var(--fill);min-height:120px;font-size:27px;font-weight:600;color:var(--ink)}
-#ovg button span{display:block;font-family:var(--mono);font-size:22px;color:var(--mute);margin-bottom:8px}#ovg button:hover,#ovg button.cur{border-color:#fff}
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+#foot{position:absolute;left:120px;right:120px;bottom:34px;display:flex;font-size:24px;color:var(--dim);z-index:5;transition:opacity .4s}
+#foot span{flex:1}#fwho{text-align:center;color:var(--mute)}#fnum{text-align:right;font-family:var(--mono);font-size:22px}
+body.nf #foot{opacity:0}
+#bar{position:absolute;left:0;bottom:0;height:5px;width:0;background:linear-gradient(90deg,#e5252a,#3fb8d6,#f0b429);transition:width .6s var(--e);z-index:6}
+#nav{position:fixed;right:14px;bottom:14px;display:flex;gap:8px;opacity:.3;z-index:20}#nav:hover{opacity:1}
+#nav button{width:44px;height:44px;border:1px solid var(--line);background:#111;color:#fff;font-size:24px;border-radius:50%;cursor:pointer}
+#ov{position:absolute;inset:0;background:rgba(0,0,0,.95);z-index:9;display:none;padding:70px 120px}#ov.on{display:block}
+#ov h3{font-size:44px;margin-bottom:10px}#ov p{color:var(--dim);font-size:24px;margin-bottom:30px}
+#ovg{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+#ovg button{padding:18px 20px;text-align:left;font:600 25px var(--sans);color:#fff;background:var(--fill);border:1px solid var(--line);border-radius:4px;cursor:pointer}
+#ovg button b{font:400 21px var(--mono);color:var(--dim);display:block;margin-bottom:6px}
 </style>
 </head>
 <body>
 <div id="stage">
-<canvas id="field" width="1920" height="1080"></canvas>
-
-<section class="slide fr s-title" data-title="Les attaques" data-section="Introduction" data-field="net" data-rgb="229,37,42" data-nofoot="1" data-who="1">
-<p class="t-m">Mission 6 · Vos premiers pas dans la cybersécurité</p>
-<h1>Les<br>attaques</h1>
-<p class="t-sub">Neuf attaques, trois familles</p>
-<p class="t-line">Comment elles fonctionnent et ce qui les distingue</p>
-<div class="t-meta"><div><b data-cfg="a1"></b>, <b data-cfg="a2"></b> et <b data-cfg="a3"></b></div><div>BTS CIEL option Informatique et Réseaux, 1re année</div><div>Cité scolaire Brocéliande · <span data-cfg="date"></span></div></div>
-</section>
-
-<section class="slide" data-title="Les trois familles" data-section="Introduction" data-field="net" data-rgb="63,184,214" data-who="1">
-<div class="s-head"><h2>On les classe par ce que veut l’attaquant</h2><p class="lead">Trois objectifs, donc trois familles. Chaque attaque de la mission trouve sa place dans l’une d’elles.</p></div>
-<div class="s-body"><div class="plan">
-<article class="pc fr panel f" data-s="1"><span class="pn">1</span><h3>Saturer</h3><ul><li>DoS</li><li>DDoS et zombies</li><li>TCP SYN flood</li></ul><p>Rendre un service indisponible</p></article>
-<article class="pc fb panel f" data-s="2"><span class="pn">2</span><h3>Écouter et usurper</h3><ul><li>Sniffing</li><li>Spoofing</li><li>Man-in-the-Middle</li></ul><p>Voir ou détourner les échanges</p></article>
-<article class="pc fy panel f" data-s="3"><span class="pn">3</span><h3>Infiltrer</h3><ul><li>Zero-day</li><li>Watering hole</li><li>Keylogger</li></ul><p>Entrer et voler des données</p></article>
-</div></div>
-</section>
-
-<section class="slide fr" id="s-ddos" data-title="DoS et DDoS" data-section="Saturer" data-field="swarm" data-rgb="229,37,42" data-who="1">
-<div class="s-head"><span class="tag">Famille 1 · Saturer</span><h2>Une source ou des milliers</h2></div>
-<div class="s-body"><div class="col">
-<article class="pp panel f" data-s="1"><h3>DoS<span class="tag ghost">1 source</span></h3><p>Un seul ordinateur envoie énormément de demandes à un site. Le site est débordé et ne répond plus : c’est le « déni de service ».</p></article>
-<article class="pp panel hot f" data-s="2"><h3>DDoS<span class="tag ghost">des milliers de sources</span></h3><p>Des milliers d’ordinateurs infectés, les « zombies », attaquent tous en même temps sur ordre du pirate. Exemple : Mirai en 2016, avec des caméras connectées.</p></article>
-<div class="key f" data-s="3">Une seule source se bloque facilement. <span>Des milliers de sources, impossible de toutes les couper.</span></div>
-</div></div>
-</section>
-
-<section class="slide fr" id="s-tcp" data-title="Se connecter à un site" data-section="Saturer" data-rgb="229,37,42" data-who="1">
-<div class="s-head"><h2>Avant de parler, on se dit bonjour</h2><p class="lead">Quand ton navigateur ouvre un site, il fait d’abord comme au téléphone avec le serveur. Cette méthode s’appelle TCP.</p></div>
-<div class="s-body"><div class="sy">
-<div><div class="hs"><h4>Toi</h4><h4>Serveur</h4>
-<div class="hr f x" data-s="1"><b>1 · « Allô ? » (SYN)</b><i></i></div>
-<div class="hr l f x" data-s="2"><b>2 · « Oui, j’écoute » (SYN-ACK)</b><i></i></div>
-<div class="hr f x" data-s="3"><b>3 · « C’est moi ! » (ACK)</b><i></i></div></div>
-<div class="key f" data-s="4" style="margin-top:20px">À l’étape 2, le serveur réserve une place et attend. <span>C’est ce détail que le pirate exploite.</span></div></div>
-<div class="col" style="width:auto;gap:20px">
-<article class="pp panel f" data-s="1" style="padding:22px 32px"><h3>SYN : la demande</h3><p>Ton ordinateur demande à se connecter au site.</p></article>
-<article class="pp panel f" data-s="2" style="padding:22px 32px"><h3>SYN-ACK : l’accord</h3><p>Le serveur accepte et garde une place pour toi, en attendant ta réponse.</p></article>
-<article class="pp panel f" data-s="3" style="padding:22px 32px"><h3>ACK : la confirmation</h3><p>Tu confirmes : la connexion est ouverte et les échanges commencent.</p></article>
-</div></div></div>
-</section>
-
-<section class="slide fr" id="s-syn" data-title="SYN flood" data-section="Saturer" data-rgb="229,37,42" data-who="2">
-<div class="s-head"><span class="tag">Famille 1 · Saturer</span><h2>SYN flood : appeler sans jamais répondre</h2></div>
-<div class="s-body">
-<div class="mm" style="margin-top:0">
-<div class="nd panel" style="width:400px"><b>Pirate</b><span>Envoie des milliers de « Allô ? »</span></div>
-<div class="cn f x" data-s="1"><i></i><i style="animation-delay:.45s"></i><i style="animation-delay:.9s"></i><i style="animation-delay:1.35s"></i><small>de faux appels, jamais confirmés</small></div>
-<div class="nd panel" style="width:400px"><b>Serveur du site</b><span>Réserve une place et attend</span></div>
-</div>
-<div class="meter panel f" data-s="2" style="margin-top:40px"><h3>Les places d’attente du serveur</h3><p>Chaque faux « Allô ? » occupe une place, car la confirmation ne vient jamais.</p><div class="mbar" id="mbar"></div><div class="full f x" data-s="3">Plein ! Un vrai client essaie de se connecter : refusé.</div></div>
-<div class="key f" data-s="4" style="margin-top:26px">Le but : rendre le site inaccessible. <span>Comme un standard téléphonique saturé de faux appels, sans rien pirater.</span></div>
-</div>
-</section>
-
-<section class="slide fb" data-title="Sniffing et spoofing" data-section="Écouter et usurper" data-rgb="63,184,214" data-who="2">
-<div class="s-head"><span class="tag">Famille 2 · Écouter et usurper</span><h2>Regarder ou se déguiser</h2></div>
-<div class="s-body"><div class="two">
-<article class="pp panel f" data-s="1"><h3>Sniffing<small>Le repérage : on écoute le réseau</small></h3><span class="tag ghost" style="margin:18px 0 0">Passif</span><p>Un outil capture ce qui circule. Si rien n’est chiffré, on peut tout lire, comme une carte postale. Exemple : un Wi-Fi public.</p><div class="smp">POST /login HTTP/1.1
-user=david&amp;pass=<em>azerty123</em></div></article>
-<article class="pp panel f" data-s="2"><h3>Spoofing<small>La mystification : on se fait passer pour un autre</small></h3><span class="tag ghost" style="margin:18px 0 0">Actif</span><p>L’attaquant falsifie son identité (adresse, e-mail…) pour tromper sa victime. Exemple : un faux e-mail du directeur.</p><div class="smp">De : <em>directeur@entreprise.fr</em>
-Réel : serveur d’un pirate</div></article>
-</div>
-<div class="key f" data-s="3">Sniffing : écouter. Spoofing : se déguiser. <span>Ensemble, ils donnent le Man-in-the-Middle.</span></div></div>
-</section>
-
-<section class="slide fb" data-title="Man-in-the-Middle" data-section="Écouter et usurper" data-rgb="63,184,214" data-who="2">
-<div class="s-head"><span class="tag">Famille 2 · Écouter et usurper</span><h2>Man-in-the-Middle : l’homme du milieu</h2></div>
-<div class="s-body">
-<div class="mm">
-<div class="nd panel"><b>Client</b><span>Navigateur</span></div>
-<div class="cn f x" data-s="1"><i></i><i></i></div>
-<div class="nd panel bad f x" data-s="2"><b>Attaquant</b><span>S’intercale</span></div>
-<div class="cn f x" data-s="1"><i></i><i></i></div>
-<div class="nd panel"><b>Serveur</b><span>Site de la banque</span></div>
-</div>
-<div class="chips f x" data-s="3"><span>Il lit</span><span>Il modifie</span></div>
-<div class="key f" data-s="4">Comme un facteur qui ouvre le courrier, le lit et le referme. <span>Exemple : un faux point d’accès Wi-Fi qui relaie le trafic.</span></div>
-</div>
-</section>
-
-<section class="slide fy" data-title="Zero-day, watering hole, keylogger" data-section="Infiltrer" data-rgb="240,180,41" data-who="3">
-<div class="s-head"><span class="tag">Famille 3 · Infiltrer</span><h2>Entrer, livrer, voler</h2></div>
-<div class="s-body"><div class="pipe">
-<article class="blk panel f" data-s="1"><span class="tag" style="align-self:flex-start">L’entrée</span><h3>Zero-day</h3><p>Une faille que personne ne connaît encore, même pas l’éditeur : aucun correctif n’existe. Exemple : Stuxnet.</p><div class="smp">Faille inconnue
-→ pas de correctif</div></article>
-<div class="cn f x" data-s="2"><i></i><i></i></div>
-<article class="blk panel f" data-s="2"><span class="tag" style="align-self:flex-start">La livraison</span><h3>Watering hole</h3><p>On piège un site que la cible visite déjà, comme un point d’eau où vient boire l’animal. Elle s’infecte en le consultant.</p><div class="smp">site-fournisseur.fr
-→ script piégé</div></article>
-<div class="cn f x" data-s="3"><i></i><i></i></div>
-<article class="blk panel f" data-s="3"><span class="tag" style="align-self:flex-start">Le vol</span><h3>Keylogger</h3><p>Il note chaque touche tapée (mots de passe, messages) et l’envoie au pirate.</p><div class="smp">d a v i d <em>▍</em></div></article>
-</div>
-<div class="key f" data-s="4">Trois rôles dans une même intrusion. <span>Le zero-day ouvre, le watering hole livre, le keylogger vole.</span></div></div>
-</section>
-
-<section class="slide" data-title="Comparatif" data-section="Synthèse" data-rgb="255,255,255" data-who="3">
-<div class="s-head"><h2>Les neuf attaques en un coup d’œil</h2></div>
-<div class="s-body"><table>
-<tr><th>Attaque</th><th>Cible</th><th>Comment</th><th>Objectif</th></tr>
-<tr class="fr f x" data-s="1"><td>DoS</td><td>Un service</td><td>Il agit</td><td>Rendre indisponible</td></tr>
-<tr class="fr f x" data-s="1"><td>DDoS</td><td>Un service</td><td>Il agit avec des zombies</td><td>Idem, à grande échelle</td></tr>
-<tr class="fr f x" data-s="1"><td>SYN flood</td><td>Les connexions</td><td>Il agit</td><td>Remplir les places d’attente</td></tr>
-<tr class="fb f x" data-s="2"><td>Sniffing</td><td>Le réseau</td><td>Il écoute</td><td>Lire les données</td></tr>
-<tr class="fb f x" data-s="2"><td>Spoofing</td><td>Une identité</td><td>Il agit</td><td>Se faire passer pour un autre</td></tr>
-<tr class="fb f x" data-s="2"><td>Man-in-the-Middle</td><td>Une communication</td><td>Il agit</td><td>Intercepter et modifier</td></tr>
-<tr class="fy f x" data-s="3"><td>Zero-day</td><td>Une faille inconnue</td><td>Il agit</td><td>Contourner les défenses</td></tr>
-<tr class="fy f x" data-s="3"><td>Watering hole</td><td>Un site de confiance</td><td>Il agit</td><td>Infecter un groupe ciblé</td></tr>
-<tr class="fy f x" data-s="3"><td>Keylogger</td><td>Un poste</td><td>Il écoute, discret</td><td>Voler des identifiants</td></tr>
-</table></div>
-</section>
-
-<section class="slide fg" data-title="Se protéger" data-section="Synthèse" data-rgb="95,211,154" data-who="3">
-<div class="s-head"><h2>Une parade par famille</h2></div>
-<div class="s-body"><div class="pr">
-<div class="g f" data-s="1"><h3>Saturer<small>Garder le service disponible</small></h3><div class="it panel">Filtrer le trafic suspect</div><div class="it panel">Service anti-DDoS</div></div>
-<div class="g f" data-s="2"><h3>Écouter<small>Garder les échanges secrets</small></h3><div class="it panel">Chiffrer : HTTPS, VPN</div><div class="it panel">Éviter les Wi-Fi publics</div></div>
-<div class="g f" data-s="3"><h3>Infiltrer<small>Fermer les portes</small></h3><div class="it panel">Mises à jour, antivirus</div><div class="it panel">Droits limités, vigilance</div></div>
-</div>
-<div class="key f" data-s="4">Mettre à jour, chiffrer, former les utilisateurs. <span>Et surveiller grâce à la veille technologique de la mission 5.</span></div></div>
-</section>
-
-<section class="slide fr s-end" data-title="Questions" data-section="Fin" data-field="net" data-rgb="229,37,42" data-nofoot="1" data-who="3">
-<h2>Merci</h2><p class="sub">Des questions ?</p>
-</section>
-
-<div id="foot"><span class="sec" id="fsec"></span><span class="who" id="fwho"></span><span class="num" id="fnum"></span></div>
+<div id="deck"></div>
+<div id="foot"><span id="fsec"></span><span id="fwho"></span><span id="fnum"></span></div>
 <div id="bar"></div>
-<div id="nav"><button id="bp" aria-label="Précédent">‹</button><button id="bn" aria-label="Suivant">›</button></div>
-<div id="hint"><b>→</b> avancer · <b>←</b> reculer · <b>G</b> aperçu · <b>F</b> plein écran</div>
-<div class="ov" id="ov"><h2>Aller à une diapositive</h2><div id="ovg"></div></div>
+<div id="ov"><h3>Aller à une diapositive</h3><p>→ avancer · ← reculer · G aperçu · F plein écran</p><div id="ovg"></div></div>
 </div>
-
+<div id="nav"><button id="bp" aria-label="Précédent">‹</button><button id="bn" aria-label="Suivant">›</button></div>
 <script>
-const CONFIG={a1:"David Lecointre",a2:"Alwyn Le Barbier",a3:"Sandy Bughin" ,date:"Octobre 2026"};
+const C={a2:"David Lecointre",a1:"Alwyn Le Barbier",a3:"Sandy Bughin",date:"Octobre 2026"};
+const R=["C'est quoi ?","Comment ça marche ?","Exemple et parades"];
+const FM={1:["fr","Famille 1 · Saturer"],2:["fb","Famille 2 · Écouter et usurper"],3:["fy","Famille 3 · Infiltrer"]};
+/* [famille, nom, sous-titre, chaîne, p1 (définition), p2 (pas à pas), exemple, parades, [clé, suite], [cible, mode, objectif]] */
+const A=[
+[1,"DoS","déni de service",["Pirate","Flot de requêtes","Serveur saturé","Service indisponible"],
+ ["Objectif : rendre un service inaccessible","Une seule machine attaque","On vise la bande passante, le processeur ou la mémoire"],
+ ["Le pirate inonde le serveur de demandes","Certaines demandes sont volontairement mal formées pour le faire planter","Résultat : les vrais utilisateurs ne peuvent plus se connecter"],
+ "Un site marchand injoignable pendant les soldes : des ventes perdues",
+ ["Limiter le nombre de demandes par adresse","Pare-feu et surveillance du trafic"],
+ ["Une seule source se repère et se bloque facilement.","C'est pourquoi les pirates sont passés au DDoS."],
+ ["Un service","Il agit seul","Rendre indisponible"]],
+[1,"DDoS et zombies","attaque distribuée",["Pirate","Réseau de machines infectées","Des milliers de sources","Cible saturée"],
+ ["Version distribuée du DoS : des milliers de machines attaquent en même temps","Ces machines sont des « zombies » : infectées à l'insu de leur propriétaire","Le pirate les commande toutes à distance (c'est le « botnet »)"],
+ ["Il infecte des machines via un logiciel malveillant ou un mot de passe par défaut","Il se constitue un réseau de zombies","Il donne l'ordre d'attaquer tous en même temps","Le flot vient de milliers d'adresses différentes : impossible à bloquer"],
+ "En 2016, le virus Mirai a infecté des caméras connectées et attaqué le fournisseur Dyn : Twitter, Netflix et bien d'autres sont devenus inaccessibles",
+ ["Utiliser un service anti-DDoS et filtrer le trafic chez l'opérateur","Changer les mots de passe par défaut des objets connectés"],
+ ["Des milliers de sources : impossible de toutes les couper.","Chaque objet non protégé peut devenir un zombie."],
+ ["Un service","Il agit avec des zombies","Idem, à grande échelle"]],
+[1,"TCP SYN flood","appeler sans jamais répondre",["Faux appels en masse","Réponses dans le vide","File d'attente pleine","Client refusé"],
+ ["Attaque qui exploite la « poignée de main » du protocole TCP","Le pirate entame des connexions mais ne les termine jamais","Le serveur garde des places réservées pour des clients qui n'existent pas"],
+ ["Normalement : le client demande à se connecter, le serveur accepte, le client confirme","Ici : le pirate demande à se connecter, le serveur accepte… mais le pirate ne confirme jamais","Le serveur attend, encore et encore, et sa file d'attente se remplit","Un vrai client arrive : plus de place, il est refusé"],
+ "Attaque classique contre les serveurs web : le site ne répond plus, sans qu'aucune donnée ne soit volée",
+ ["Utiliser les « SYN cookies » (le serveur ne réserve plus de place à l'avance)","Réduire le délai d'attente, limiter le débit, pare-feu ou IPS"],
+ ["Comme un standard téléphonique saturé de faux appels.","Rien n'est piraté : le service est juste saturé."],
+ ["Les connexions","Il agit","Remplir les places d'attente"]],
+[2,"Sniffing","l'espionnage du réseau",["Utilisateur","Réseau non chiffré","Espion","Données lues"],
+ ["Écouter discrètement tout ce qui circule sur le réseau","C'est une attaque passive : très difficile à détecter","Outils courants : Wireshark, tcpdump"],
+ ["La carte réseau capture les messages qui passent","Si les données ne sont pas chiffrées, elles sont lisibles en clair","Le pirate récupère identifiants, mots de passe, messages"],
+ "Sur un Wi-Fi public, un mot de passe envoyé sans chiffrement est lu par l'attaquant",
+ ["Chiffrer les échanges : HTTPS, SSH, VPN, WPA2/3","Éviter les Wi-Fi publics pour les données sensibles"],
+ ["Écouter sans rien modifier.","Le même outil sert aussi aux administrateurs pour diagnostiquer un réseau."],
+ ["Le réseau","Il écoute","Lire les données"]],
+[2,"Spoofing","l'usurpation d'identité",["Attaquant","Fausse identité","Victime trompée","Action piégée"],
+ ["Se faire passer pour quelqu'un d'autre","Attaque active : on falsifie une identité","Ça peut être une adresse IP, une adresse physique, un e-mail…"],
+ ["Le pirate falsifie l'expéditeur ou l'adresse source","La victime croit que c'est une personne de confiance","Elle clique, répond ou paie"],
+ "Fraude au président : un faux e-mail du directeur demande un virement urgent à la comptabilité",
+ ["SPF, DKIM et DMARC pour vérifier l'authenticité des e-mails","Toujours vérifier une demande inhabituelle par un autre canal (téléphone)"],
+ ["Le sniffing écoute ; le spoofing se déguise.","Ensemble, ils permettent l'attaque « homme du milieu »."],
+ ["Une identité","Il agit","Se faire passer pour un autre"]],
+[2,"Man-in-the-Middle","l'homme du milieu",["Client","Attaquant","Serveur"],
+ ["Le pirate s'intercale entre deux personnes qui discutent","Aucune des deux ne s'en rend compte","C'est une combinaison d'espionnage et d'usurpation"],
+ ["Il se place au milieu : faux Wi-Fi, fausses réponses réseau…","Les deux connexions passent par lui sans qu'on le voie","Il peut lire les messages (confidentialité) et les modifier (intégrité)"],
+ "Un faux Wi-Fi dans un aéroport qui relaie discrètement le trafic vers le site de la banque",
+ ["HTTPS, vérification des certificats, VPN","Éviter les Wi-Fi publics, authentifier les appareils (802.1X)"],
+ ["Comme un facteur qui ouvre le courrier, le lit et le referme.","Il lit et il modifie, sans que personne ne s'en aperçoive."],
+ ["Une communication","Il agit","Intercepter et modifier"]],
+[3,"Zero-day","la faille inconnue",["Faille inconnue","Outil d'attaque","Attaque","Correctif tardif"],
+ ["Une faille de sécurité que l'éditeur ne connaît pas encore","Aucun correctif n'existe : personne ne peut se protéger","« Zéro jour » = zéro jour pour réagir avant l'attaque"],
+ ["Le pirate découvre la faille et fabrique un outil pour l'exploiter","Il attaque avant que quiconque soit au courant","L'éditeur finit par publier un correctif, mais trop tard"],
+ "Stuxnet (2010) : plusieurs failles Windows inconnues utilisées contre des centrifugeuses en Iran",
+ ["Défense en profondeur, antivirus/EDR, segmentation du réseau","Mises à jour rapides et veille technologique permanente"],
+ ["On ne peut pas corriger ce qu'on ne connaît pas.","D'où l'importance de limiter les dégâts et de surveiller."],
+ ["Une faille inconnue","Il agit","Contourner les défenses"]],
+[3,"Watering hole","le point d'eau",["Site de confiance piégé","Visite de la cible","Infection silencieuse","Accès au réseau"],
+ ["On piège un site que la cible visite déjà régulièrement","Comme un prédateur qui attend sa proie au point d'eau","On vise un groupe précis : une entreprise, un secteur d'activité"],
+ ["Le pirate repère les sites que la cible consulte souvent","Il en compromet un et y cache un code malveillant","La simple visite du site infecte la machine, souvent via une faille inconnue","Le pirate entre alors dans le réseau de l'entreprise"],
+ "Fin 2012, le site du Council on Foreign Relations a été piégé pour infecter des visiteurs ciblés",
+ ["Navigateur et extensions à jour","Proxy web filtrant, antivirus/EDR"],
+ ["Contrairement au phishing, la victime vient d'elle-même.","Elle n'a reçu aucun message suspect."],
+ ["Un site de confiance","Il agit","Infecter un groupe ciblé"]],
+[3,"Keylogger","l'enregistreur de frappe",["Installation","Frappes enregistrées","Envoi au pirate","Identifiants volés"],
+ ["Programme (ou petit boîtier) qui enregistre chaque touche tapée","Deux formes : logiciel caché ou matériel branché","Espionnage discret et silencieux"],
+ ["Il arrive par une pièce jointe, un téléchargement ou une clé USB","Il se cache et stocke tout ce qui est tapé","Il envoie régulièrement les données au pirate"],
+ "Vol d'identifiants bancaires et de messages privés sans que la victime s'en aperçoive",
+ ["Antivirus/EDR, double authentification","Gestionnaire de mots de passe, contrôle des ports USB"],
+ ["Avec la double authentification, un mot de passe volé ne suffit plus.","Il écoute, discret, sans rien casser."],
+ ["Un poste","Il écoute, discret","Voler des identifiants"]]
+];
+const li=a=>a.map(x=>`<li>${x}</li>`).join("");
+let H=`<section class="slide fr tt" data-t="Les attaques" data-sec="Introduction" data-nf="1"><p class="m">Mission 6 · Vos premiers pas dans la cybersécurité</p><h1>Les<br>attaques</h1><p class="sub">Neuf attaques, trois familles</p><div class="meta"><div><b>${C.a1}</b>, <b>${C.a2}</b> et <b>${C.a3}</b></div><div>BTS CIEL option Informatique et Réseaux, 1re année</div><div>Cité scolaire Brocéliande · ${C.date}</div></div></section>`;
+H+=`<section class="slide fb" data-t="Les trois familles" data-sec="Introduction" data-who="1"><div><span class="tag">Introduction</span><h2>On les classe par ce que veut l'attaquant</h2><p class="lead">Trois objectifs, donc trois familles. Pour chaque attaque : c'est quoi, comment ça marche, exemple et parades.</p></div><div class="plan">`+
+[[ "fr","Saturer",["DoS","DDoS et zombies","TCP SYN flood"],"Rendre un service indisponible"],["fb","Écouter et usurper",["Sniffing","Spoofing","Man-in-the-Middle"],"Voir ou détourner les échanges"],["fy","Infiltrer",["Zero-day","Watering hole","Keylogger"],"Entrer et voler des données"]].map((f,i)=>`<article class="pc ${f[0]} panel f" data-s="${i+1}"><span class="pn">${i+1}</span><h3>${f[1]}</h3><ul>${li(f[2])}</ul><p>${f[3]}</p></article>`).join("")+`</div></section>`;
+A.forEach(a=>{const f=FM[a[0]];
+ H+=`<section class="slide ${f[0]}" data-t="${a[1]}" data-sec="${f[1]}" data-atk="1"><div><span class="tag">${f[1]}</span><h2>${a[1]}<small>${a[2]}</small></h2></div><div class="ch">${a[3].map(x=>`<span>${x}</span>`).join("<em>›</em>")}</div><div class="cols">`+
+ [`<ul>${li(a[4])}</ul>`,`<ol>${li(a[5])}</ol>`,`<h4>Exemple</h4><p>${a[6]}</p><h4>Parades</h4><ul>${li(a[7])}</ul>`].map((b,i)=>`<article class="col panel f" data-s="${i+1}"><div class="rl"><b>${i+1}</b><span>${R[i]}</span><i>${C["a"+(i+1)]}</i></div>${b}</article>`).join("")+
+ `</div><div class="key f" data-s="4"><b>${a[8][0]}</b> <span>${a[8][1]}</span></div></section>`});
+H+=`<section class="slide" data-t="Comparatif" data-sec="Synthèse" data-who="2" style="--a:#fff"><div><h2>Les neuf attaques en un coup d'œil</h2></div><table><tr><th>Attaque</th><th>Cible</th><th>Comment</th><th>Objectif</th></tr>`+
+ A.map(a=>`<tr class="${FM[a[0]][0]} f" data-s="${a[0]}"><td>${a[1]}</td><td>${a[9][0]}</td><td>${a[9][1]}</td><td>${a[9][2]}</td></tr>`).join("")+`</table></section>`;
+H+=`<section class="slide fg" data-t="Se protéger" data-sec="Synthèse" data-who="3"><div><h2>Une parade par famille</h2></div><div class="pr">`+
+[["Saturer","Garder le service disponible",["Filtrer le trafic suspect","Service anti-DDoS"]],["Écouter","Garder les échanges secrets",["Chiffrer : HTTPS, VPN","Éviter les Wi-Fi publics"]],["Infiltrer","Fermer les portes",["Mises à jour, antivirus","Droits limités, vigilance"]]].map((g,i)=>`<div class="f" data-s="${i+1}"><h3>${g[0]}</h3><small>${g[1]}</small>${g[2].map(x=>`<div class="it panel">${x}</div>`).join("")}</div>`).join("")+
+`</div><div class="key f" data-s="4"><b>Mettre à jour, chiffrer, former les utilisateurs.</b> <span>Et surveiller grâce à la veille technologique de la mission 5.</span></div></section>`;
+H+=`<section class="slide fr te" data-t="Questions" data-sec="Fin" data-who="3" data-nf="1"><h2>Merci</h2><p class="sub">Des questions ?</p></section>`;
+const nb=s=>s.replace(/ ([:;!?»])/g,"\u00a0$1").replace(/« /g,"«\u00a0");
+document.getElementById("deck").innerHTML=nb(H);
 (()=>{
-const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-$$('[data-cfg]').forEach(e=>e.textContent=CONFIG[e.dataset.cfg]);
-const w=document.createTreeWalker($('#stage'),NodeFilter.SHOW_TEXT),ns=[];while(w.nextNode())ns.push(w.currentNode);
-ns.forEach(n=>{const p=n.parentElement;if(!p||/^(SCRIPT|STYLE)$/.test(p.tagName)||p.closest('.smp'))return;n.nodeValue=n.nodeValue.replace(/ ([:;!?»])/g,'\u00a0$1').replace(/« /g,'«\u00a0')});
-const mb=$('#mbar');for(let k=0;k<10;k++){const u=document.createElement('u');u.style.setProperty('--k',k);mb.appendChild(u)}
-const stage=$('#stage'),S=$$('.slide'),N=S.length,cv=$('#field'),cx=cv.getContext('2d');
-const MX=S.map(s=>Math.max(0,...$$('[data-s]',s).map(e=>+e.dataset.s)));
-let cur=0,step=0,mode='',rgb='229,37,42',swarm=1,last=0;
-function fit(){const k=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform=`translate(${(innerWidth-1920*k)/2}px,${(innerHeight-1080*k)/2}px) scale(${k})`;const d=Math.min(2,Math.max(1,k*(devicePixelRatio||1)));cv.width=1920*d;cv.height=1080*d;cx.setTransform(d,0,0,d,0,0)}
-/* ---- canvas ---- */
-const R=(a,b)=>a+Math.random()*(b-a);
-const nodes=[...Array(52)].map(()=>({x:R(840,1880),y:R(60,1020),f:0})),edges=[];
-nodes.forEach((a,i)=>nodes.forEach((b,j)=>{if(j>i&&Math.hypot(a.x-b.x,a.y-b.y)<220)edges.push([a,b])}));
-let pk=[];
-const T={x:1440,y:540},src=[...Array(40)].map((_,i)=>{const a=i/40*6.2832+R(-.08,.08),r=R(300,430);return{x:T.x+Math.cos(a)*r,y:T.y+Math.sin(a)*r*.74,t:R(0,1)}});
-let sp=[],hit=0;
-function drawNet(dt){
- cx.strokeStyle='rgba(255,255,255,.08)';cx.lineWidth=1;cx.beginPath();edges.forEach(([a,b])=>{cx.moveTo(a.x,a.y);cx.lineTo(b.x,b.y)});cx.stroke();
- if(Math.random()<dt/55)pk.push({e:edges[Math.random()*edges.length|0],u:0,r:Math.random()<.5});
- pk=pk.filter(p=>{p.u+=dt/900;const[a,b]=p.r?[p.e[1],p.e[0]]:p.e;if(p.u>=1){b.f=1;return false}
-  cx.fillStyle=`rgba(${rgb},.9)`;cx.beginPath();cx.arc(a.x+(b.x-a.x)*p.u,a.y+(b.y-a.y)*p.u,4,0,6.2832);cx.fill();return true});
- nodes.forEach(n=>{n.f=Math.max(0,n.f-dt/900);cx.fillStyle=`rgba(255,255,255,${.22+n.f*.5})`;cx.beginPath();cx.arc(n.x,n.y,3+n.f*3,0,6.2832);cx.fill();
-  if(n.f>0){cx.strokeStyle=`rgba(${rgb},${n.f*.6})`;cx.beginPath();cx.arc(n.x,n.y,6+(1-n.f)*26,0,6.2832);cx.stroke()}})}
-function drawSwarm(dt){
- const many=swarm>1,act=many?src:[src[20]];hit=Math.max(0,hit-dt/400);
- act.forEach(s=>{s.t+=dt/(many?R(700,1500):110);if(s.t>=1){s.t=0;sp.push({s,u:0})}});
- sp=sp.filter(p=>{p.u+=dt/(many?650:520);if(p.u>=1){hit=1;return false}if(!act.includes(p.s))return false;
-  cx.fillStyle=`rgba(${rgb},.9)`;cx.beginPath();cx.arc(p.s.x+(T.x-p.s.x)*p.u,p.s.y+(T.y-p.s.y)*p.u,4,0,6.2832);cx.fill();return true});
- act.forEach(s=>{cx.strokeStyle=`rgba(${rgb},.7)`;cx.fillStyle='#000';cx.lineWidth=2;cx.beginPath();cx.arc(s.x,s.y,8,0,6.2832);cx.fill();cx.stroke()});
- cx.font='500 22px "IBM Plex Mono",monospace';cx.fillStyle='rgba(255,255,255,.7)';
- if(many)cx.fillText('zombies',src[3].x-30,src[3].y-22);else cx.fillText('attaquant',act[0].x-40,act[0].y+40);
- const sh=many?R(-3,3):0,k=many?1:.3;
- for(let i=1;i<=3;i++){cx.strokeStyle=`rgba(${rgb},${(.5-i*.12)*(k+hit*.6)})`;cx.lineWidth=2;cx.beginPath();cx.arc(T.x+sh,T.y,60+i*26+hit*8,0,6.2832);cx.stroke()}
- cx.fillStyle='#000';cx.strokeStyle=many?`rgb(${rgb})`:'#fff';cx.lineWidth=3;cx.beginPath();cx.arc(T.x+sh,T.y,56,0,6.2832);cx.fill();cx.stroke();
- cx.fillStyle='#fff';cx.textAlign='center';cx.fillText(many?'saturé':'cible',T.x+sh,T.y+8);cx.textAlign='left'}
-function frame(now){requestAnimationFrame(frame);const dt=Math.min(50,now-last);last=now;cx.clearRect(0,0,1920,1080);if(mode==='net')drawNet(dt);else if(mode==='swarm')drawSwarm(dt)}
-/* ---- moteur ---- */
-function apply(i,st){const s=S[i];s.dataset.step=st;$$('[data-s]',s).forEach(e=>e.classList.toggle('on',+e.dataset.s<=st));
- if(s.id==='s-ddos')swarm=st>=2?40:1;}
-function ui(){const s=S[cur];$('#fsec').textContent=s.dataset.section;$('#fwho').textContent=CONFIG['a'+s.dataset.who];
- $('#fnum').textContent=String(cur+1).padStart(2,'0')+' / '+String(N).padStart(2,'0');$('#bar').style.width=(cur+1)/N*100+'%';
- document.body.classList.toggle('nofoot',!!s.dataset.nofoot);mode=s.dataset.field||'';rgb=s.dataset.rgb||'229,37,42';
- $$('#ovg button').forEach((b,k)=>b.classList.toggle('cur',k===cur));history.replaceState(null,'','#'+(cur+1))}
-function go(i,st){cur=Math.max(0,Math.min(N-1,i));step=Math.max(0,Math.min(MX[cur],st||0));S.forEach((s,k)=>{s.classList.toggle('active',k===cur);s.classList.toggle('before',k<cur)});apply(cur,step);ui()}
-const next=()=>{if(step<MX[cur]){step++;apply(cur,step);ui()}else if(cur<N-1)go(cur+1,0)};
-const prev=()=>{if(step>0){step--;apply(cur,step);ui()}else if(cur>0)go(cur-1,MX[cur-1])};
-const ov=$('#ov');S.forEach((s,i)=>{const b=document.createElement('button');b.innerHTML=`<span>${String(i+1).padStart(2,'0')}</span>${s.dataset.title}`;b.onclick=()=>{ov.classList.remove('on');go(i,0)};$('#ovg').appendChild(b)});
-document.addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;const k=e.key;$('#hint').style.opacity=0;
- if(k==='Escape'){ov.classList.remove('on');return}
- if(ov.classList.contains('on')){if(k==='g'||k==='G')ov.classList.remove('on');return}
- if(['ArrowRight','ArrowDown','PageDown',' ','Enter'].includes(k)){e.preventDefault();next()}
- else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].includes(k)){e.preventDefault();prev()}
- else if(k==='Home')go(0);else if(k==='End')go(N-1,MX[N-1]);
- else if(k==='g'||k==='G')ov.classList.add('on');
- else if(k==='f'||k==='F')document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()});
-$('#bn').onclick=next;$('#bp').onclick=prev;
-let tx=null;document.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
-document.addEventListener('touchend',e=>{if(tx===null)return;const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>60)(d<0?next:prev)();tx=null},{passive:true});
-let idle;const wake=()=>{document.body.classList.remove('idle');clearTimeout(idle);idle=setTimeout(()=>document.body.classList.add('idle'),2500)};document.addEventListener('mousemove',wake);wake();
-addEventListener('resize',fit);document.addEventListener('fullscreenchange',fit);fit();
-const h=parseInt(location.hash.slice(1),10);go(Number.isFinite(h)?h-1:0,0);
-requestAnimationFrame(frame);setTimeout(()=>$('#hint').style.opacity=0,6000);
+const $=s=>document.querySelector(s),st=$("#stage"),S=[...document.querySelectorAll(".slide")],N=S.length;
+const MX=S.map(s=>Math.max(0,...[...s.querySelectorAll("[data-s]")].map(e=>+e.dataset.s)));
+let cur=0,step=0;
+function fit(){const k=Math.min(innerWidth/1920,innerHeight/1080);st.style.transform=`translate(${(innerWidth-1920*k)/2}px,${(innerHeight-1080*k)/2}px) scale(${k})`}
+function show(){
+ S.forEach((s,i)=>{s.classList.toggle("active",i==cur);s.classList.toggle("before",i<cur)});
+ const s=S[cur];
+ s.querySelectorAll("[data-s]").forEach(e=>e.classList.toggle("on",+e.dataset.s<=step));
+ const w=s.dataset.atk?Math.min(3,Math.max(1,step)):s.dataset.who;
+ $("#fsec").textContent=s.dataset.sec;$("#fwho").textContent=w?C["a"+w]:"";
+ $("#fnum").textContent=String(cur+1).padStart(2,"0")+" / "+String(N).padStart(2,"0");
+ $("#bar").style.width=((cur+1)/N*100)+"%";document.body.classList.toggle("nf",!!s.dataset.nf)}
+function next(){if(step<MX[cur])step++;else if(cur<N-1){cur++;step=0}show()}
+function prev(){if(step>0)step--;else if(cur>0){cur--;step=MX[cur]}show()}
+$("#ovg").innerHTML=S.map((s,i)=>`<button data-i="${i}"><b>${String(i+1).padStart(2,"0")}</b>${s.dataset.t}</button>`).join("");
+$("#ovg").onclick=e=>{const b=e.target.closest("button");if(b){cur=+b.dataset.i;step=0;$("#ov").classList.remove("on");show()}};
+$("#bn").onclick=e=>{e.stopPropagation();next()};$("#bp").onclick=e=>{e.stopPropagation();prev()};
+st.addEventListener("click",e=>{if(!e.target.closest("#ov"))next()});
+addEventListener("keydown",e=>{const k=e.key;
+ if(k=="ArrowRight"||k==" "||k=="PageDown"||k=="Enter"){e.preventDefault();next()}
+ else if(k=="ArrowLeft"||k=="PageUp"||k=="Backspace"){e.preventDefault();prev()}
+ else if(k=="g"||k=="G")$("#ov").classList.toggle("on");
+ else if(k=="Escape")$("#ov").classList.remove("on");
+ else if(k=="f"||k=="F"){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}});
+addEventListener("resize",fit);fit();show();
 })();
 </script>
 </body>
